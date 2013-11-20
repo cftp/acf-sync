@@ -154,9 +154,7 @@ class ACF_Sync {
 			<h2><?php _e( 'Sync', 'acf-sync' ); ?></h2>
 
 			<p>
-				This screen enables you to export to a file and import from it, the 
-				file will be stored at <var>xxxx</var>. This enables one to more easily
-				work with ACF as a team and to store ACF configs in version control.
+				<?php printf( __( 'The XML file will be stored at <var>%s</var>, you can control this with the <var>acf_sync_xml_file_location</var> filter.', 'acf-sync' ), $this->xml_file_location() ); ?>
 			</p>
 
 			<form method="post" action="<?php echo esc_url( add_query_arg( array( 'import' => 1 ) ) ); ?>">
