@@ -1,0 +1,16 @@
+{
+    "name"       : "cftp/acf-sync",
+    "description": "Sync ACF configs more easily",
+    "homepage"   : "https://github.com/cftp/acf-sync/",
+    "type"       : "wordpress-plugin",
+    "license"    : "GPL-2.0+",
+    "authors"    : [
+            {
+                    "name"    : "Code For The People",
+                    "homepage": "http://codeforthepeople.com/"
+            }
+    ],
+    "require": {
+            "composer/installers": "~1.0"
+    }
+}
