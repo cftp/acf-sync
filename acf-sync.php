@@ -141,7 +141,7 @@ class ACF_Sync {
 				work with ACF as a team and to store ACF configs in version control.
 			</p>
 
-			<form method="post" action="">
+			<form method="post" action="<?php echo esc_url( add_query_arg( array( 'import' => 1 ) ) ); ?>">
 				<?php wp_nonce_field( 'export', 'nonce' ); ?>
 				<?php wp_nonce_field( 'acf_sync_load', '_acf_sync_nonce' ); ?>
 
@@ -194,6 +194,7 @@ class ACF_Sync {
 		file_put_contents( $xml_file_location, $xml );
 		// Redirect and show notice
 		$redirect_to = admin_url( 'edit.php' );
+		// @TODO: Show message to tell the user we've exported, what was exported and when (so something changes when they do it again)
 		$redirect_to = add_query_arg( array( 'post_type' => 'acf', 'page' => 'acf_sync', 'acf_sync_msg_1' => 1 ), $redirect_to );
 		wp_safe_redirect( $redirect_to );
 	}
@@ -206,8 +207,25 @@ class ACF_Sync {
 	 * @author Simon Wheatley
 	 **/
 	public function import_from_file() {
-		
+		$file = $this->xml_file_location();
+
+		// @TODO: Delete all ACF posts before importing, so we get updates
+
+		// Output buffering so we can discard the message from the WP Importer
+		ob_start();
+
+		set_time_limit(0);
+		// @TODO: Make sure WP Importer plugin is present
+		$wp_import = new WP_Import();
+		$res = $wp_import->import( $file );
+
+		ob_end_clean();
+
 		// Redirect and show notice
+		$redirect_to = admin_url( 'edit.php' );
+		// @TODO: Show message to tell the user we've exported, what was exported and when (so something changes when they do it again)
+		$redirect_to = add_query_arg( array( 'post_type' => 'acf', 'page' => 'acf_sync', 'acf_sync_msg_2' => 1 ), $redirect_to );
+		wp_safe_redirect( $redirect_to );
 	}
 
 	/**
