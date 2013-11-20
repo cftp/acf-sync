@@ -65,10 +65,8 @@ class ACF_Sync {
 	 * @return null
 	 */
 	public function __construct() {
-		add_action( 'admin_init',                       array( $this, 'action_admin_init' ) );
-		add_action( 'admin_notices',                    array( $this, 'action_admin_notices' ) );
-		add_action( 'admin_menu',                       array( $this, 'action_admin_menu' ) );
-		add_action( 'load-custom-fields_page_acf_sync', array( $this, 'action_load_page_acf_sync' ) );
+		add_action( 'init',          array( $this, 'action_init' ) );
+		add_action( 'admin_notices', array( $this, 'action_admin_notices' ) );
 
 		$this->version = 1;
 	}
@@ -86,6 +84,28 @@ class ACF_Sync {
 	 **/
 	public function action_admin_init() {
 		$this->maybe_upgrade();
+	}
+
+	/**
+	 * Hooks the WP action init
+	 *
+	 * @action init
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function action_init() {
+		// Sanity checks
+		if ( ! is_admin() )
+			return;
+		if ( ! $this->is_wp_importer_loaded() )
+			return;
+		if ( ! $this->is_acf_loaded() )
+			return;
+
+		add_action( 'admin_init',                       array( $this, 'action_admin_init' ) );
+		add_action( 'admin_menu',                       array( $this, 'action_admin_menu' ) );
+		add_action( 'load-custom-fields_page_acf_sync', array( $this, 'action_load_page_acf_sync' ) );
 	}
 
 	/**
