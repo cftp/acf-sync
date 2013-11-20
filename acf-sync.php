@@ -146,11 +146,7 @@ class ACF_Sync {
 				<?php wp_nonce_field( 'acf_sync_load', '_acf_sync_nonce' ); ?>
 
 				<?php 
-					$acf_query = new WP_Query( array(
-						'post_type'   => 'acf',
-						'post_status' => 'any',
-						'fields'      => 'ids',
-					) );
+					$acf_query = $this->get_acf_query();
 					foreach ( $acf_query->posts as $post_id ) {
 						?><input type="hidden" name="acf_posts[]" value="<?php echo absint( $post_id ); ?>" /><?php
 					}
@@ -242,6 +238,20 @@ class ACF_Sync {
 			$filename = 'acf-config-site.xml';
 		$filepath = ABSPATH . $filename;
 		return apply_filters( 'acf_sync_xml_file_location', $filepath, $filename );
+	}
+
+	/**
+	 * Returns a WP_Query to get all the ACF post IDs.
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function get_acf_query() {
+		return new WP_Query( array(
+			'post_type'   => 'acf',
+			'post_status' => 'any',
+			'fields'      => 'ids',
+		) );
 	}
 
 	/**
