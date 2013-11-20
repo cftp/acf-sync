@@ -292,7 +292,26 @@ class ACF_Sync {
 	public function show_new_old_message() {
 		// @FIXME: How can this be more useful?
 		$xml_file = $this->xml_file_location();
-		$this->admin_notice_msg( sprintf( __( 'ACF Sync file is %s old.', 'acf-sync' ), human_time_diff( filemtime( $xml_file ) ) ) );	
+		if ( is_file( $xml_file ) )
+			$xml_file_mod_time = filemtime( $xml_file );
+		else
+			return;
+		$newest_acf_query = new WP_Query( array(
+			'post_type'      => 'acf',
+			'post_status'    => 'any',
+			'order'          => 'DESC',
+			'orderby'        => 'modified',
+			'posts_per_page' => 1,
+		) );
+		if ( $newest_acf_query->have_posts() ) {
+			$latest_mod_time = mysql2date( 'U', $newest_acf_query->posts[ 0 ]->post_modified );
+			if ( $latest_mod_time > $xml_file_mod_time )
+				$this->admin_notice_msg( sprintf( __( 'ACF Sync file is %s older than the youngest ACF modification. Do you need to export?', 'acf-sync' ), human_time_diff( $latest_mod_time, $xml_file_mod_time ) ) );
+			else
+				$this->admin_notice_msg( sprintf( __( 'ACF Sync file is %s younger than the youngest ACF modification. Do you need to import?', 'acf-sync' ), human_time_diff( $xml_file_mod_time, $latest_mod_time ) ) );
+		} else {
+			$this->admin_notice_msg( sprintf( __( 'ACF Sync file is %s old.', 'acf-sync' ), human_time_diff( $xml_file_mod_time ) ) );	
+		}
 	}
 
 	/**
