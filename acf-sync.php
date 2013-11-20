@@ -236,7 +236,10 @@ class ACF_Sync {
 	 * @author Simon Wheatley
 	 **/
 	public function xml_file_location() {
-		$filename = 'acf-config.xml';
+		if ( is_multisite() )
+			$filename = sprintf( 'acf-config-site-%d.xml', $GLOBALS[ 'blog_id' ] );
+		else
+			$filename = 'acf-config-site.xml';
 		$filepath = ABSPATH . $filename;
 		return apply_filters( 'acf_sync_xml_file_location', $filepath, $filename );
 	}
