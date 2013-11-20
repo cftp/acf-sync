@@ -65,8 +65,9 @@ class ACF_Sync {
 	 * @return null
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'action_admin_init' ) );
-		add_action( 'admin_menu', array( $this, 'action_admin_menu' ) );
+		add_action( 'admin_init',                       array( $this, 'action_admin_init' ) );
+		add_action( 'admin_menu',                       array( $this, 'action_admin_menu' ) );
+		add_action( 'load-custom-fields_page_acf_sync', array( $this, 'action_load_page_acf_sync' ) );
 
 		$this->version = 1;
 	}
@@ -98,6 +99,25 @@ class ACF_Sync {
 		add_submenu_page( 'edit.php?post_type=acf', __( 'Sync', 'acf-sync' ), __( 'Sync', 'acf-sync' ), 'manage_options', 'acf_sync', array( $this, 'callback_acf_sync_page' ) );
 	}
 
+	/**
+	 * Hooks the WP action load_page_acf_sync
+	 *
+	 * @action load-custom-fields_page_acf_sync
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function action_load_page_acf_sync() {
+		if ( ! isset( $_POST[ '_acf_sync_nonce' ] ) )
+			return;
+
+		if ( isset( $_POST[ 'acf_sync_export_to_file' ] ) )
+			$this->export_to_file();
+
+		if ( isset( $_POST[ 'acf_sync_import_from_file' ] ) )
+			$this->import_from_file();
+	}
+
 	// CALLBACKS
 	// =========
 
@@ -120,10 +140,23 @@ class ACF_Sync {
 			</p>
 
 			<form method="post" action="">
+				<?php wp_nonce_field( 'export', 'nonce' ); ?>
+				<?php wp_nonce_field( 'acf_sync_load', '_acf_sync_nonce' ); ?>
+
+				<?php 
+					$acf_query = new WP_Query( array(
+						'post_type'   => 'acf',
+						'post_status' => 'any',
+						'fields'      => 'ids',
+					) );
+					foreach ( $acf_query->posts as $post_id ) {
+						?><input type="hidden" name="acf_posts[]" value="<?php echo absint( $post_id ); ?>" /><?php
+					}
+				?>
 
 				<p>
-					<?php submit_button( __( 'Export File' ), 'primary', 'acfsync_export_to_file', false ); ?>
-					<?php submit_button( __( 'Import File' ), 'primary', 'acfsync_import_from_file', false ); ?>
+					<?php submit_button( __( 'Export File' ), 'primary', 'acf_sync_export_to_file', false ); ?>
+					<?php submit_button( __( 'Import File' ), 'primary', 'acf_sync_import_from_file', false ); ?>
 				</p>
 
 			</form>
@@ -133,6 +166,60 @@ class ACF_Sync {
 
 	// UTILITIES
 	// =========
+
+	/**
+	 * Exports the XML file to the nominated location
+	 * in the filesystem.
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function export_to_file() {
+		// @TODO Make sure the file location is writable, and inform the user if not
+		// Start buffering output
+		ob_start();
+		// Include ACF core export file 
+		$path = apply_filters('acf/get_info', 'path');
+		include_once($path . 'core/actions/export.php');
+		// Now we have to remove the headers. Grrr.
+		header_remove( 'Content-Description' );
+		header_remove( 'Content-Disposition' );
+		header_remove( 'Content-Type' );
+		// Capture and delete output buffeer
+		$xml = ob_get_clean();
+		// // Write captured output buffer to a file
+		$xml_file_location = $this->xml_file_location();
+		file_put_contents( $xml_file_location, $xml );
+		// Redirect and show notice
+		$redirect_to = admin_url( 'edit.php' );
+		$redirect_to = add_query_arg( array( 'post_type' => 'acf', 'page' => 'acf_sync', 'acf_sync_msg_1' => 1 ), $redirect_to );
+		wp_safe_redirect( $redirect_to );
+	}
+
+	/**
+	 * Imports the XML file at the nominated location
+	 * in the filesystem.
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function import_from_file() {
+		
+		// Redirect and show notice
+	}
+
+	/**
+	 * Provides the location to store 
+	 * the XML file at.
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function xml_file_location() {
+		$filename = 'acf-config.xml';
+		$filepath = ABSPATH . $filename;
+		return apply_filters( 'acf_sync_xml_file_location', $filepath, $filename );
+	}
 
 	/**
 	 * Returns the URL for for a file/dir within this plugin.
