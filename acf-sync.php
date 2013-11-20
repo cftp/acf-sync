@@ -111,6 +111,8 @@ class ACF_Sync {
 		if ( ! isset( $_POST[ '_acf_sync_nonce' ] ) )
 			return;
 
+		check_admin_referer( 'acf_sync_load', '_acf_sync_nonce' );
+
 		if ( isset( $_POST[ 'acf_sync_export_to_file' ] ) )
 			$this->export_to_file();
 
