@@ -205,7 +205,10 @@ class ACF_Sync {
 	public function import_from_file() {
 		$file = $this->xml_file_location();
 
-		// @TODO: Delete all ACF posts before importing, so we get updates
+		// Delete all ACF posts before importing, so we get updates
+		$acf_query = $this->get_acf_query();
+		foreach ( $acf_query->posts as $post_id )
+			wp_delete_post( $post_id, true );
 
 		// Output buffering so we can discard the message from the WP Importer
 		ob_start();
