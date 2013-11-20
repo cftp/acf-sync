@@ -66,6 +66,7 @@ class ACF_Sync {
 	 */
 	public function __construct() {
 		add_action( 'admin_init',                       array( $this, 'action_admin_init' ) );
+		add_action( 'admin_notices',                    array( $this, 'action_admin_notices' ) );
 		add_action( 'admin_menu',                       array( $this, 'action_admin_menu' ) );
 		add_action( 'load-custom-fields_page_acf_sync', array( $this, 'action_load_page_acf_sync' ) );
 
@@ -85,6 +86,22 @@ class ACF_Sync {
 	 **/
 	public function action_admin_init() {
 		$this->maybe_upgrade();
+	}
+
+	/**
+	 * Hooks the WP action admin_notices
+	 *
+	 * @action admin_notices
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function action_admin_notices() {
+		if ( ! $this->is_wp_importer_loaded() )
+			$this->admin_notice_error( sprintf( __( 'Please install the <a href="%s" target="_blank">WordPress Importer plugin</a>, as the ACF Sync plugin requires it.', 'acf-sync' ), 'http://wordpress.org/plugins/wordpress-importer/' ) );
+			
+		if ( ! $this->is_acf_loaded() )
+			$this->admin_notice_error( sprintf( __( 'Please install the <a href="%s" target="_blank">Advanced Custom Fields plugin</a>, as the ACF Sync plugin requires it.', 'acf-sync' ), 'http://wordpress.org/plugins/advanced-custom-fields/' ) );
 	}
 
 	/**
@@ -259,6 +276,36 @@ class ACF_Sync {
 	}
 
 	/**
+	 * Checks ACF plugin is active.
+	 *
+	 * @return bool True if ACF plugin is active
+	 * @author Simon Wheatley
+	 **/
+	public function is_acf_loaded() {
+		return class_exists( 'Acf' );
+	}
+
+	/**
+	 * Checks WP Importer plugin is active.
+	 *
+	 * @return bool True if WP Importer plugin is active
+	 * @author Simon Wheatley
+	 **/
+	public function is_wp_importer_loaded() {
+		// The WP Importer is near invisible when not importing,
+		// so we cannot test for classes, functions, constants, etc.
+		// Gather the active plugin paths.
+		$plugins = wp_get_mu_plugins() + wp_get_active_and_valid_plugins();
+		if ( function_exists( 'wp_get_active_network_plugins' ) )
+			$plugins += wp_get_active_network_plugins();
+		// Check each plugin path to see it it ends in `wordpress-importer.php`
+		foreach ( $plugins as $plugin_path )
+			if ( preg_match( '/wordpress-importer\.php$/i', $plugin_path ) )
+				return true;
+		return false;
+	}
+
+	/**
 	 * Returns the URL for for a file/dir within this plugin.
 	 *
 	 * @param  string The path within this plugin, e.g. '/js/clever-fx.js'
@@ -315,6 +362,31 @@ class ACF_Sync {
 			);
 		}
 		return $this->plugin[ $item ] . ltrim( $file, '/' );
+	}
+
+	/**
+	 * Output the HTML for an admin notice area error.
+	 *
+	 * @param sting $msg The error message to show
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function admin_notice_error( $msg ) {
+		$allowed_html = array(
+			'address' => array(),
+			'a' => array(
+				'href' => true,
+				'name' => true,
+				'target' => true,
+			),
+			'em' => array(),
+			'strong' => array(),
+		);
+		?>
+		<div class="fade error" id="message">
+			<p><?php echo wp_kses( $msg, $allowed_html ); ?></p>
+		</div>
+		<?php
 	}
 
 	/**
