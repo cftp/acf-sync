@@ -130,6 +130,7 @@ class ACF_Sync {
 	 * @author Simon Wheatley
 	 **/
 	public function callback_acf_sync_page() {
+		// @TODO: Show a notice when the XML file has changed since the last import somehow, and prompt the user to re-import.
 		?>
 		<div class="wrap">
 			<?php screen_icon(); ?>
