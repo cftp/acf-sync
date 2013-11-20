@@ -75,18 +75,6 @@ class ACF_Sync {
 	// =====
 
 	/**
-	 * Hooks the WP action admin_init
-	 *
-	 * @action admin_init
-	 *
-	 * @return void
-	 * @author Simon Wheatley
-	 **/
-	public function action_admin_init() {
-		$this->maybe_upgrade();
-	}
-
-	/**
 	 * Hooks the WP action init
 	 *
 	 * @action init
@@ -103,7 +91,6 @@ class ACF_Sync {
 		if ( ! $this->is_acf_loaded() )
 			return;
 
-		add_action( 'admin_init',                       array( $this, 'action_admin_init' ) );
 		add_action( 'admin_menu',                       array( $this, 'action_admin_menu' ) );
 		add_action( 'load-custom-fields_page_acf_sync', array( $this, 'action_load_page_acf_sync' ) );
 	}
@@ -405,30 +392,6 @@ class ACF_Sync {
 			<p><?php echo wp_kses( $msg, $allowed_html ); ?></p>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Checks the DB structure is up to date, rewrite rules, 
-	 * theme image size options are set, etc.
-	 *
-	 * @return void
-	 **/
-	public function maybe_upgrade() {
-		global $wpdb;
-		$option_name = 'acf_sync_version';
-		$version = get_option( $option_name, 0 );
-
-		if ( $version == $this->version )
-			return;
-
-		// if ( $version < 1 ) {
-		// 	error_log( "ACF Sync: …" );
-		// }
-
-		// N.B. Remember to increment $this->version above when you add a new IF
-
-		update_option( $option_name, $this->version );
-		error_log( "ACF Sync: Done upgrade, now at version " . $this->version );
 	}
 }
 
