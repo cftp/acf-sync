@@ -3,7 +3,7 @@
 /*
 Plugin Name: Advanced Custom Fields: Sync
 Plugin URI: http://codeforthepeople.com/?plugin=acf_sync
-Description: Description
+Description: Sync ACF configs more easily
 Version: 0.1
 Author: Code for the People Ltd
 Author URI: http://codeforthepeople.com/
