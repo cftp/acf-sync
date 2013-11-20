@@ -109,6 +109,8 @@ class ACF_Sync {
 			
 		if ( ! $this->is_acf_loaded() )
 			$this->admin_notice_error( sprintf( __( 'Please install the <a href="%s" target="_blank">Advanced Custom Fields plugin</a>, as the ACF Sync plugin requires it.', 'acf-sync' ), 'http://wordpress.org/plugins/advanced-custom-fields/' ) );
+
+		$this->show_new_old_message();
 	}
 
 	/**
@@ -281,6 +283,19 @@ class ACF_Sync {
 	}
 
 	/**
+	 * 
+	 *
+	 *
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function show_new_old_message() {
+		// @FIXME: How can this be more useful?
+		$xml_file = $this->xml_file_location();
+		$this->admin_notice_msg( sprintf( __( 'ACF Sync file is %s old.', 'acf-sync' ), human_time_diff( filemtime( $xml_file ) ) ) );	
+	}
+
+	/**
 	 * Checks ACF plugin is active.
 	 *
 	 * @return bool True if ACF plugin is active
@@ -393,6 +408,32 @@ class ACF_Sync {
 		</div>
 		<?php
 	}
+
+	/**
+	 * Output the HTML for an admin notice area msg.
+	 *
+	 * @param sting $msg The error message to show
+	 * @return void
+	 * @author Simon Wheatley
+	 **/
+	public function admin_notice_msg( $msg ) {
+		$allowed_html = array(
+			'address' => array(),
+			'a' => array(
+				'href' => true,
+				'name' => true,
+				'target' => true,
+			),
+			'em' => array(),
+			'strong' => array(),
+		);
+		?>
+		<div class="updated">
+			<p><?php echo wp_kses( $msg, $allowed_html ); ?></p>
+		</div>
+		<?php
+	}
+
 }
 
 
