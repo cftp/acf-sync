@@ -334,13 +334,14 @@ class ACF_Sync {
 		// The WP Importer is near invisible when not importing,
 		// so we cannot test for classes, functions, constants, etc.
 		// Gather the active plugin paths.
-		$plugins = wp_get_mu_plugins() + wp_get_active_and_valid_plugins();
+		$plugins = array_merge( wp_get_mu_plugins(), wp_get_active_and_valid_plugins() );
 		if ( function_exists( 'wp_get_active_network_plugins' ) )
-			$plugins += wp_get_active_network_plugins();
+			$plugins = array_merge( $plugins, wp_get_active_network_plugins() );
 		// Check each plugin path to see it it ends in `wordpress-importer.php`
-		foreach ( $plugins as $plugin_path )
+		foreach ( $plugins as $plugin_path ) {
 			if ( preg_match( '/wordpress-importer\.php$/i', $plugin_path ) )
 				return true;
+		}
 		return false;
 	}
 
