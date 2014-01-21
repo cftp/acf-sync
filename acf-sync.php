@@ -119,7 +119,7 @@ class ACF_Sync {
 			$this->admin_notice_error( sprintf( __( 'Please install the <a href="%s" target="_blank">Advanced Custom Fields plugin</a>, as the ACF Sync plugin requires it.', 'acf-sync' ), 'http://wordpress.org/plugins/advanced-custom-fields/' ) );
 
 		if ( self::is_dev_mode_active() )
-			$this->admin_notice_error( sprintf( __( 'ACF development mode is on. ACF fields are being loaded from the database, not the PHP export. Remember to <a href="%s">export when you’re done</a>!', 'acf-sync' ), admin_url( 'edit.php?post_type=acf&page=acf-export' ) ) );
+			$this->admin_notice_error( sprintf( __( 'ACF development mode is on. ACF fields are being loaded from the database, not the PHP export. Remember to <a href="%1$s">export to PHP</a> and <a href="%2$s">sync the XML</a> when you’re done!', 'acf-sync' ), admin_url( 'edit.php?post_type=acf&page=acf-export' ), admin_url( 'edit.php?post_type=acf&page=acf_sync' ) ) );
 
 		$this->show_new_old_message();
 	}
