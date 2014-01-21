@@ -3,7 +3,7 @@
 /*
 Plugin Name: Advanced Custom Fields: Sync
 Plugin URI: http://codeforthepeople.com/?plugin=acf_sync
-Description: Sync ACF configs more easily
+Description: Sync ACF configs more easily, also adds an "ACF_DEV_MODE" constant to switch between the fields in the DB and those in code.
 Version: 0.1
 Author: Code for the People Ltd
 Author URI: http://codeforthepeople.com/
@@ -27,6 +27,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
+if ( ! defined( 'ACF_DEV_MODE' ) )
+	define( 'ACF_DEV_MODE', false );
+
+if ( ! defined( 'ACF_LITE' ) )
+	define( 'ACF_LITE', ! ACF_DEV_MODE );
 
 /**
  * 
@@ -34,6 +39,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * @package ACF Sync
  **/
 class ACF_Sync {
+
+	const DEV_MODE = ACF_DEV_MODE;
 
 	/**
 	 * A version integer.
@@ -93,6 +100,7 @@ class ACF_Sync {
 
 		add_action( 'admin_menu',                       array( $this, 'action_admin_menu' ) );
 		add_action( 'load-custom-fields_page_acf_sync', array( $this, 'action_load_page_acf_sync' ) );
+		add_action( 'plugins_loaded',                   array( $this, 'action_plugins_loaded' ) );
 	}
 
 	/**
@@ -109,6 +117,9 @@ class ACF_Sync {
 			
 		if ( ! $this->is_acf_loaded() )
 			$this->admin_notice_error( sprintf( __( 'Please install the <a href="%s" target="_blank">Advanced Custom Fields plugin</a>, as the ACF Sync plugin requires it.', 'acf-sync' ), 'http://wordpress.org/plugins/advanced-custom-fields/' ) );
+
+		if ( self::is_dev_mode_active() )
+			$this->admin_notice_error( sprintf( __( 'ACF development mode is on. ACF fields are being loaded from the database, not the PHP export. Remember to <a href="%s">export when you’re done</a>!', 'acf-sync' ), admin_url( 'edit.php?post_type=acf&page=acf-export' ) ) );
 
 		$this->show_new_old_message();
 	}
@@ -144,6 +155,25 @@ class ACF_Sync {
 
 		if ( isset( $_POST[ 'acf_sync_import_from_file' ] ) )
 			$this->import_from_file();
+	}
+
+	/**
+	 * 
+	 *
+	 * @author John Blackbourn
+	 **/
+	public function action_plugins_loaded() {
+
+		if ( ! self::is_dev_mode_active() ) {
+			# Live mode. Only load field groups from PHP exports (ignore the database).
+			# Unfortunately the `acf_field_group()` class is instantiated without being assigned
+			# to a variable and without being a singleton, so there's no way to un-hook the filter
+			# which loads field groups from the database. Instead, we un-hook all hooks and then
+			# re-hook the one which loads fields from the PHP export.
+			remove_all_filters( 'acf/get_field_groups' );
+			add_filter( 'acf/get_field_groups', 'api_acf_get_field_groups', 2 );
+		}
+
 	}
 
 	// CALLBACKS
@@ -343,6 +373,15 @@ class ACF_Sync {
 				return true;
 		}
 		return false;
+	}
+
+		/**
+	 * 
+	 *
+	 * @author John Blackbourn
+	 **/
+	public static function is_dev_mode_active() {
+		return self::DEV_MODE;
 	}
 
 	/**
