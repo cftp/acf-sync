@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Advanced Custom Fields: Sync
-Plugin URI: http://codeforthepeople.com/?plugin=acf_sync
+Plugin URI: https://github.com/cftp/acf-sync
 Description: Sync ACF configs more easily, also adds an "ACF_DEV_MODE" constant to switch between the fields in the DB and those in code.
 Version: 0.1
 Author: Code for the People Ltd
