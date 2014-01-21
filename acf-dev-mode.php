@@ -43,7 +43,9 @@ class ACF_Dev_Mode {
 		if ( self::active() ) {
 			?>
 			<div id="acf_dev_notice" class="error">
-				<p>ACF development mode is on. ACF fields are being loaded from the database, not the PHP export. Remember to <a href="<?php echo admin_url( 'edit.php?post_type=acf&page=acf-export' ); ?>">export when you're done</a>!</p>
+				<p>
+					<?php printf( __( 'ACF development mode is on. ACF fields are being loaded from the database, not the PHP export. Remember to <a href="%1$s">export to PHP</a> and <a href="%2$s">sync the XML</a> when you’re done!', 'acf-sync' ), admin_url( 'edit.php?post_type=acf&page=acf-export' ), admin_url( 'edit.php?post_type=acf&page=acf_sync' ) ); ?>
+				</p>
 			</div>
 			<?php
 		}
