@@ -462,7 +462,7 @@ class ACF_Sync {
 			'strong' => array(),
 		);
 		?>
-		<div class="fade error">
+		<div class="error">
 			<p><?php echo wp_kses( $msg, $allowed_html ); ?></p>
 		</div>
 		<?php
