@@ -1,0 +1,76 @@
+#. extracted from eurosportcsv/[LeMag-LeBuzz] Internationnalisation_FR - plugin-acf-sync.csv
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-15 11:18+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Translate Toolkit 1.9.0\n"
+
+#: acf-dev-mode.php:47
+msgid ""
+"ACF development mode is on. ACF fields are being loaded from the database, "
+"not the PHP export. Remember to <a href=\"%1$s\">export to PHP</a> and <a "
+"href=\"%2$s\">sync the XML</a> when youâ€™re done!"
+msgstr ""
+
+#: acf-sync.php:110
+msgid ""
+"Please install the <a href=\"%s\" target=\"_blank\">WordPress Importer "
+"plugin</a>, as the ACF Sync plugin requires it."
+msgstr ""
+"Veuillez installer le plugin <a href=\"%s\" target=\"_blank\">WordPress "
+"Importer</a>, pour utiliser le plugin ACF Sync."
+
+#: acf-sync.php:113
+msgid ""
+"Please install the <a href=\"%s\" target=\"_blank\">Advanced Custom Fields "
+"plugin</a>, as the ACF Sync plugin requires it."
+msgstr ""
+"Veuillez installer le plugin <a href=\"%s\" target=\"_blank\">Advanced Custom "
+"Fields</a>, pour utiliser le plugin ACF Sync."
+
+#: acf-sync.php%3A127+acf-sync.php%3A165
+msgid "Sync"
+msgstr "Synchroniser"
+
+#: acf-sync.php:168
+msgid ""
+"The XML file will be stored at <var>%s</var>, you can control this with the "
+"<var>acf_sync_xml_file_location</var> filter."
+msgstr ""
+"Le fichier XML va être stocké dans: <var>%s</var>, vous pouvez le paramétrer "
+"grâce au filtre <var>acf_sync_xml_file_location</var>."
+
+#: acf-sync.php:183
+msgid "Export File"
+msgstr "Exporter"
+
+#: acf-sync.php:184
+msgid "Import File"
+msgstr "Importer"
+
+#: acf-sync.php:311
+msgid ""
+"ACF Sync file is %s older than the youngest ACF modification. Do you need to "
+"export?"
+msgstr ""
+"Le fichier ACF Sync est plus ancien de  %s que la modification ACF la plus "
+"récente. Voulez vous l'exporter ?"
+
+#: acf-sync.php:313
+msgid ""
+"ACF Sync file is %s younger than the youngest ACF modification. Do you need "
+"to import?"
+msgstr ""
+"Le fichier ACF Sync est plus récent de  %s que la modification ACF la plus "
+"récente. Voulez vous l'importer ?"
+
+#: acf-sync.php:315
+msgid "ACF Sync file is %s old."
+msgstr "Le fichier ACF Sync est ancien de %s."
