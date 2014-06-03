@@ -306,6 +306,10 @@ class ACF_Sync {
 	 * @author Simon Wheatley
 	 **/
 	public function show_new_old_message() {
+
+		// bail if not in development mode... otherwise we see this nag all the time
+		if ( ! ACF_DEV_MODE ) return;
+
 		// @FIXME: How can this be more useful?
 		$xml_file = $this->xml_file_location();
 		if ( is_file( $xml_file ) ) {
